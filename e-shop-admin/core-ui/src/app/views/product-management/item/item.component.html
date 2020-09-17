@@ -1,0 +1,565 @@
+<style>
+    #add,
+    #delete{
+        display: inline-block;
+        vertical-align: baseline;
+    }
+    
+    </style>
+    
+    <div class="col-md-12">
+        <div class="card card-accent-primary">
+          <div class="card-header">
+            <strong>{{mainTopic}}</strong> 
+          </div>
+          <div class="card-body">
+    
+            <table class="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th style="width: 200px;">Actions</th>
+                    <th>Item Code</th>
+                    <th>Item Name</th>
+                    <th>Selling Price</th>
+                    <th>color</th>
+                    <th>Avalability</th>
+                    
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <!-- (click)="clearModel();" --><button class="btn btn-block btn-outline-primary" 
+                            type="button"  data-toggle="modal" data-target="#myModal"><i class='fa fa-plus fa-md'></i>
+                        </button>
+                    </td>
+                    <td colspan="5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ">
+                        <input type="text" 
+                            id="text-input" 
+                            name="searchCode" 
+                            [(ngModel)]="search"
+                            class="form-control" 
+                            placeholder="Search">
+                    </td>
+                    <!-- <td><input type="text" 
+                            id="text-input" 
+                            name="searchDescription" 
+                            [(ngModel)]="search"
+                            class="form-control" 
+                            placeholder="Description">
+                    </td> -->
+                  </tr>
+                  <tr *ngFor="let mainModelobj of mainModelList | filter:search | paginate: { itemsPerPage: 10, currentPage: p }; let i = index ">
+                    <td>
+                        <div class="col text-center">
+                            <button id="add" class="btn btn-block btn-outline-primary" data-toggle="modal" data-target="#myModal"
+                                type="button" (click)="getById(mainModelobj.id)" style="width: 50px; height: 30px;"><i class="cui-pencil icons font-1xl d-block "></i>
+                            </button>
+                            <button id="delete" class="btn btn-block btn-outline-danger" 
+                                type="button" (click)="delete(mainModelobj.id)" 
+                                style="width: 50px; height: 30px;">
+                                <i class="icon-trash icons font-1xl d-block"></i>
+                            </button>
+                        </div>
+                    </td> 
+                    <td>
+                      {{mainModelobj.code}}
+                  </td>
+                    <td>
+                        {{mainModelobj.itemDisplayName}}
+                    </td>
+                    <td>
+                        {{mainModelobj.sellPrice}}
+                    </td>
+                    <td>
+                        {{mainModelobj.color}}
+                    </td>
+                    <td>
+                        {{mainModelobj.avalability}}
+                  </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="row">
+                <div class="col-sm-12 text-right">
+                  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                </div>
+              </div>
+             <!--  <ul class="pagination">
+                <li class="page-item"><a class="page-link" href="#">Prev</a></li>
+                <li class="page-item active">
+                  <a class="page-link" href="#">1</a>
+                </li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><a class="page-link" href="#">4</a></li>
+                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+              </ul> -->
+            
+          </div>
+         
+        </div>
+        
+      </div>
+    
+    
+    
+    
+      <!-- The Modal -->
+    <div class="modal" id="myModal">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+      
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h4 class="modal-title">{{modelTopic}}</h4>
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+      
+            <!-- Modal body -->
+            <div class="modal-body">
+    
+                <div class="col-md-12">
+                    <div class="card">
+                      <!-- <div class="card-header">
+                        <strong>Basic Form</strong> Elements
+                      </div> -->
+                      <div class="card-body">
+    
+                        <!-- alert -->
+                        <div id="success-alert" class="alert alert-success" role="alert" style="display: none;">
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <strong>Success </strong> {{message}}
+                        </div>
+    
+                        <div id="alert-danger" class="alert alert-danger alert-dismissible" style="display: none;">
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <strong>Error </strong> {{message}}
+                        </div>
+                        <!-- /alert -->
+    
+                        <form class="form-horizontal" #itemForm="ngForm" (ngSubmit)="submit();">
+
+                          <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="text-input">Item Name</label>
+                            <div class="col-md-9">
+                              <input type="text" 
+                                        name="itemDisplayName" 
+                                        #itemDisplayName="ngModel" 
+                                        [(ngModel)]="mainModel.itemDisplayName"
+                                        class="form-control" 
+                                        placeholder="Item Name"
+                                        required>
+                             <!--  <span class="help-block">This is a help text</span> -->
+                             <div *ngIf="itemDisplayName.touched && itemDisplayName.errors?.required" style="color: red;">Item name is required</div>
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="text-input">Item Code</label>
+                            <div class="col-md-9">
+                              <input type="text" 
+                                        name="code" 
+                                        #code="ngModel" 
+                                        [(ngModel)]="mainModel.code"
+                                        class="form-control" 
+                                        placeholder="Item code"
+                                        required>
+                             <!--  <span class="help-block">This is a help text</span> -->
+                             <div *ngIf="code.touched && code.errors?.required" style="color: red;">Item name is required</div>
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="text-input">Product Category</label>
+                            <div class="col-md-7">
+                              <input type="text" 
+                                        name="productCatDiscription" 
+                                        #productCatDiscription="ngModel" 
+                                        [(ngModel)]="mainModel.productCatDiscription"
+                                        class="form-control" 
+                                        placeholder="Product Category"
+                                        [readonly]="true"
+                                        required>
+                             <!--  <span class="help-block">This is a help text</span> -->
+                             <div *ngIf="productCatDiscription.touched && productCatDiscription.errors?.required" style="color: red;">Product category is required</div>
+                            </div>
+                            <div class="col-md-2">
+                              <button type="button" class="btn btn-block btn-outline-primary" (click)="getAllProductCat()" data-toggle="modal" data-target="#productCatModel">
+                                ...
+                              </button>
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="text-input">Product</label>
+                            <div class="col-md-7">
+                              <input type="text" 
+                                        name="productDiscription" 
+                                        #productDiscription="ngModel" 
+                                        [(ngModel)]="mainModel.productDiscription"
+                                        class="form-control" 
+                                        placeholder="Product"
+                                        [readonly]="true"
+                                        required>
+                             <!--  <span class="help-block">This is a help text</span> -->
+                             <div *ngIf="productDiscription.touched && productDiscription.errors?.required" style="color: red;">Product category is required</div>
+                            </div>
+                            <div class="col-md-2">
+                              <button type="button" class="btn btn-block btn-outline-primary" (click)="getAllProduct()" data-toggle="modal" data-target="#productModel">
+                                ...
+                              </button>
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="text-input">Item Price</label>
+                            <div class="col-md-9">
+                              <input type="text" 
+                                        name="price" 
+                                        #price="ngModel" 
+                                        [(ngModel)]="mainModel.price"
+                                        class="form-control" 
+                                        placeholder="Item price"
+                                        required>
+                             <!--  <span class="help-block">This is a help text</span> -->
+                             <div *ngIf="price.touched && price.errors?.required" style="color: red;">Item price is required</div>
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="text-input">Selling price</label>
+                            <div class="col-md-9">
+                              <input type="text" 
+                                        name="sellPrice" 
+                                        #sellPrice="ngModel" 
+                                        [(ngModel)]="mainModel.sellPrice"
+                                        class="form-control" 
+                                        placeholder="Selling price"
+                                        required>
+                             <!--  <span class="help-block">This is a help text</span> -->
+                             <div *ngIf="sellPrice.touched && sellPrice.errors?.required" style="color: red;">Item price is required</div>
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="text-input">Selling price</label>
+                            <div class="col-md-9">
+                              <select class="form-control" 
+                                      name="avalability" 
+                                      #avalability="ngModel" 
+                                      [(ngModel)]="mainModel.avalability">
+                                <option value="Y">Yes</option>
+                                <option value="N">No</option>
+                              </select>
+                             <!--  <span class="help-block">This is a help text</span> -->
+                             <div *ngIf="sellPrice.touched && sellPrice.errors?.required" style="color: red;">Item price is required</div>
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="text-input">Brand</label>
+                            <div class="col-md-9">
+                              <input type="text" 
+                                        name="brand" 
+                                        #brand="ngModel" 
+                                        [(ngModel)]="mainModel.brand"
+                                        class="form-control" 
+                                        placeholder="Brand">
+                             <!--  <span class="help-block">This is a help text</span> -->
+                             <!-- <div *ngIf="brand.touched && brand.errors?.required" style="color: red;">Brand is required</div> -->
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="text-input">Item Discription</label>
+                            <div class="col-md-9">
+                              <input type="text" 
+                                        name="discription" 
+                                        #discription="ngModel" 
+                                        [(ngModel)]="mainModel.discription"
+                                        class="form-control" 
+                                        placeholder="Discription">
+                             <!--  <span class="help-block">This is a help text</span> -->
+                             <!-- <div *ngIf="discription.touched && discription.errors?.required" style="color: red;">Brand is required</div> -->
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="text-input">Item Details</label>
+                            <div class="col-md-9">
+                              <input type="text" 
+                                        name="details" 
+                                        #details="ngModel" 
+                                        [(ngModel)]="mainModel.details"
+                                        class="form-control" 
+                                        placeholder="Details">
+                             <!--  <span class="help-block">This is a help text</span> -->
+                             <!-- <div *ngIf="details.touched && details.errors?.required" style="color: red;">Brand is required</div> -->
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="text-input">Size</label>
+                            <div class="col-md-9">
+                              <input type="text" 
+                                        name="size" 
+                                        #size="ngModel" 
+                                        [(ngModel)]="mainModel.size"
+                                        class="form-control" 
+                                        placeholder="Size">
+                             <!--  <span class="help-block">This is a help text</span> -->
+                            <!--  <div *ngIf="size.touched && size.errors?.required" style="color: red;">Brand is required</div> -->
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="text-input">Color</label>
+                            <div class="col-md-9">
+                              <input type="text" 
+                                        name="color" 
+                                        #color="ngModel" 
+                                        [(ngModel)]="mainModel.color"
+                                        class="form-control" 
+                                        placeholder="Color">
+                             <!--  <span class="help-block">This is a help text</span> -->
+                             <!-- <div *ngIf="details.touched && details.errors?.required" style="color: red;">Brand is required</div> -->
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label class="col-md-3 col-form-label" for="text-input">Quntity</label>
+                            <div class="col-md-9">
+                              <input type="text" 
+                                        name="details" 
+                                        #quntity="ngModel" 
+                                        [(ngModel)]="mainModel.quntity"
+                                        class="form-control" 
+                                        placeholder="Quntity">
+                             <!--  <span class="help-block">This is a help text</span> -->
+                             <!-- <div *ngIf="details.touched && details.errors?.required" style="color: red;">Brand is required</div> -->
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label class="col-sm-3 form-control-label">Image</label>
+                            <div class="col-sm-7">
+                              <input type="file" 
+                                      class="form-control" 
+                                      placeholder="Group Name" 
+                                      name="imageName"
+                                      (change)="selectFile($event,1)" 
+                                      required>
+                            <!-- <div *ngIf="imageName.touched" >
+                                <div *ngIf="imageName.errors?.required" class="alert alert-danger">Image is required</div>
+                            </div> -->
+                            <div class="col-md-2">
+                              <img class="image-col" src={{temporyImage_1}}>
+                            </div>
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label class="col-sm-3 form-control-label">Image</label>
+                            <div class="col-sm-7">
+                              <input type="file" 
+                                      class="form-control" 
+                                      placeholder="Group Name" 
+                                      name="imageName"
+                                      (change)="selectFile($event,2)" 
+                                      required>
+                            <!-- <div *ngIf="imageName.touched" >
+                                <div *ngIf="imageName.errors?.required" class="alert alert-danger">Image is required</div>
+                            </div> -->
+                            <div class="col-md-2">
+                              <img class="image-col" src={{temporyImage_2}}>
+                            </div>
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label class="col-sm-3 form-control-label">Image</label>
+                            <div class="col-sm-7">
+                              <input type="file" 
+                                      class="form-control" 
+                                      placeholder="Group Name" 
+                                      name="imageName"
+                                      (change)="selectFile($event,3)" 
+                                      required>
+                            <!-- <div *ngIf="imageName.touched" >
+                                <div *ngIf="imageName.errors?.required" class="alert alert-danger">Image is required</div>
+                            </div> -->
+                            <div class="col-md-2">
+                              <img class="image-col" src={{temporyImage_3}}>
+                            </div>
+                            </div>
+                          </div>
+
+                          <div class="form-group row">
+                            <label class="col-sm-3 form-control-label">Image</label>
+                            <div class="col-sm-7">
+                              <input type="file" 
+                                      class="form-control" 
+                                      placeholder="Group Name" 
+                                      name="imageName"
+                                      (change)="selectFile($event,4)" 
+                                      required>
+                            <!-- <div *ngIf="imageName.touched" >
+                                <div *ngIf="imageName.errors?.required" class="alert alert-danger">Image is required</div>
+                            </div> -->
+                            <div class="col-md-2">
+                              <img class="image-col" src={{temporyImage_4}}>
+                            </div>
+                            </div>
+                          </div>
+    
+                            
+                          
+    
+                          <div class="row">
+                            <div class="col-sm-12 text-right">
+                                <button type="reset" (click)="resetImage();" class="btn btn-sm btn-danger "><i class="fa fa-ban"></i> Reset</button>
+                                <button name="submit"  [disabled]="!itemForm.valid" type="submit" class="btn btn-sm btn-primary"><i class="fa fa-dot-circle-o"></i> Submit</button>
+                                
+                            </div>
+                        </div>
+                            
+                        </form>
+                      </div>
+                      <!-- <div class="card-footer">
+                        
+                      </div> -->
+                    </div>
+                  </div>
+    
+            </div>
+      
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+      
+          </div>
+        </div>
+      </div>
+
+      <!--product category Modal -->
+      <div class="modal fade" id="productCatModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Select Product Category</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Action</th>
+                    <th scope="col">Code</th>
+                    <th scope="col">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    
+                    <th colspan="3">
+                      <input type="text" 
+                          id="text-input" 
+                          name="catSearch" 
+                          [(ngModel)]="productCatSearch"
+                          class="form-control" 
+                          placeholder="Search">
+                    </th>
+
+                  </tr>
+                  
+                  <tr *ngFor="let productCat of productCatList | filter:productCatSearch | paginate: { itemsPerPage: 5, currentPage: p }; let i = index ">
+                    <th>
+                      <button class="btn btn-block btn-outline-primary" 
+                      type="button" (click)="selectPrdCat(productCat.id)" data-dismiss="modal" >Select</button>
+                    </th>
+                    <td>{{productCat.code}}</td>
+                    <td>{{productCat.description}}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="row">
+                <div class="col-sm-12 text-right">
+                  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div> -->
+          </div>
+        </div>
+      </div>
+
+
+      <!--product Modal -->
+      <div class="modal fade" id="productModel" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Select Product</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Action</th>
+                    <th scope="col">Code</th>
+                    <th scope="col">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    
+                    <th colspan="3">
+                      <input type="text" 
+                          id="text-input" 
+                          name="prdSearch" 
+                          [(ngModel)]="productSearch"
+                          class="form-control" 
+                          placeholder="Search">
+                    </th>
+
+                  </tr>
+                  
+                  <tr *ngFor="let product of productList | filter:productSearch | paginate: { itemsPerPage: 5, currentPage: p }; let i = index ">
+                    <th>
+                      <button class="btn btn-block btn-outline-primary" 
+                      type="button" (click)="selectPrd(product.id)" data-dismiss="modal" >Select</button>
+                    </th>
+                    <td>{{product.code}}</td>
+                    <td>{{product.description}}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="row">
+                <div class="col-sm-12 text-right">
+                  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div> -->
+          </div>
+        </div>
+      </div>
+
+
+
+
